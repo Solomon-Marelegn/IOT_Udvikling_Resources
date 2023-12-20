@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}admin{% endblock %}
+{% block content %}
+    <link rel="stylesheet" href="../static/admin.css">
+    <div class="admin-container">
+        <h2>Admin Page</h2>
+        <form method="POST" action="{{ url_for('refresh_page') }}">
+            <button class="refresh-btn" type="submit">Refresh</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>Device Name</th>
+                    <th>Device Status</th>
+                    <th>Control</th>
+                </tr>
+            </thead>
+            <tbody id="deviceTableBody">
+                {% for device, status in device_status.items() %}
+                    <tr>
+                        <td>{{ device }}</td>
+                        <td class="{% if status == 'On' %}status-on{% else %}status-off{% endif %}" id="{{ device }}-status">{{ status }}</td>
+                        <td>
+                            {% if device not in ['Mqtt_Broker', 'Database'] %}
+                                <form method="POST" action="{{ url_for('toggle_device') }}">
+                                    <input type="hidden" name="device" value="{{ device }}">
+                                    <button class="control-btn" type="submit">Toggle</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
